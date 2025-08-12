@@ -69,7 +69,7 @@ erDiagram
     date DateAwarded
   }
 
-  %% FK → PK relationships (same visuals as your ERD)
+  %% FK → PK relationships 
   INSTRUCTOR            }|..|| STUDENT           : "FK StudentID → PK"
   CLASS                 }|..|| INSTRUCTOR        : "FK InstructorID → PK"
   CLASS_MEETING         }|..|| CLASS             : "FK ClassID → PK"
