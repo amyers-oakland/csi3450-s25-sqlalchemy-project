@@ -10,10 +10,8 @@
 </head>
 <body>
   <div class="mermaid">
-classDiagram
-  direction TB
-
-  class STUDENT {
+erDiagram
+  STUDENT {
     int     StudentID PK
     varchar FirstName
     varchar LastName
@@ -21,13 +19,13 @@ classDiagram
     date    JoinDate
   }
 
-  class INSTRUCTOR {
+  INSTRUCTOR {
     int   StudentID PK,FK
     date  StartDate
     string Status
   }
 
-  class CLASS {
+  CLASS {
     int     ClassID PK
     varchar Level
     varchar DayOfWeek
@@ -36,52 +34,56 @@ classDiagram
     int     InstructorID FK
   }
 
-  class CLASS_MEETING {
+  CLASS_MEETING {
     int  MeetingID PK
     date MeetingDate
     int  ClassID FK
   }
 
-  class CLASS_ATTENDANCE {
+  CLASS_ATTENDANCE {
     int StudentID PK,FK
     int MeetingID PK,FK
   }
 
-  class INSTRUCTOR_ATTENDANCE {
+  INSTRUCTOR_ATTENDANCE {
     int    StudentID PK,FK
     int    MeetingID PK,FK
     string Role
   }
 
-  class RANK {
+  RANK {
     int     RankID PK
     varchar RankName
     varchar BeltColor
   }
 
-  class RANK_REQUIREMENT {
+  RANK_REQUIREMENT {
     int RequirementID PK
     int RankID FK
     text RequirementDescription
   }
 
-  class STUDENT_RANK {
+  STUDENT_RANK {
     int  StudentID PK,FK
     int  RankID PK,FK
     date DateAwarded
   }
 
-  %% Relationships (FK -> PK)
-  INSTRUCTOR            --> STUDENT           : StudentID
-  CLASS                 --> INSTRUCTOR        : InstructorID
-  CLASS_MEETING         --> CLASS             : ClassID
-  CLASS_ATTENDANCE      --> STUDENT           : StudentID
-  CLASS_ATTENDANCE      --> CLASS_MEETING     : MeetingID
-  INSTRUCTOR_ATTENDANCE --> INSTRUCTOR        : StudentID
-  INSTRUCTOR_ATTENDANCE --> CLASS_MEETING     : MeetingID
-  RANK_REQUIREMENT      --> RANK              : RankID
-  STUDENT_RANK          --> STUDENT           : StudentID
-  STUDENT_RANK          --> RANK              : RankID
+  %% FK → PK relationships (same visuals as your ERD)
+  INSTRUCTOR            }|..|| STUDENT           : "FK StudentID → PK"
+  CLASS                 }|..|| INSTRUCTOR        : "FK InstructorID → PK"
+  CLASS_MEETING         }|..|| CLASS             : "FK ClassID → PK"
+
+  CLASS_ATTENDANCE      }|..|| STUDENT           : "FK StudentID → PK"
+  CLASS_ATTENDANCE      }|..|| CLASS_MEETING     : "FK MeetingID → PK"
+
+  INSTRUCTOR_ATTENDANCE }|..|| INSTRUCTOR        : "FK StudentID → PK"
+  INSTRUCTOR_ATTENDANCE }|..|| CLASS_MEETING     : "FK MeetingID → PK"
+
+  RANK_REQUIREMENT      }|..|| RANK              : "FK RankID → PK"
+
+  STUDENT_RANK          }|..|| STUDENT           : "FK StudentID → PK"
+  STUDENT_RANK          }|..|| RANK              : "FK RankID → PK"
   </div>
 </body>
 </html>
