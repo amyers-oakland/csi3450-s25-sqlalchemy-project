@@ -1,32 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>maru-relational</title>
-    <script type="module">
-      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-      mermaid.initialize({ startOnLoad: true });
-    </script>
-  </head>
-  <body>
-    <div class="mermaid">
-      classDiagram direction TB class STUDENT { int StudentID PK varchar
-      FirstName varchar LastName date DateOfBirth date JoinDate } class
-      INSTRUCTOR { int StudentID PK,FK date StartDate string Status } class
-      CLASS { int ClassID PK varchar Level varchar DayOfWeek time Time varchar
-      Location int InstructorID FK } class CLASS_MEETING { int MeetingID PK date
-      MeetingDate int ClassID FK } class CLASS_ATTENDANCE { int StudentID PK,FK
-      int MeetingID PK,FK } class INSTRUCTOR_ATTENDANCE { int StudentID PK,FK
-      int MeetingID PK,FK string Role } class RANK { int RankID PK varchar
-      RankName varchar BeltColor } class RANK_REQUIREMENT { int RequirementID PK
-      int RankID FK text RequirementDescription } class STUDENT_RANK { int
-      StudentID PK,FK int RankID PK,FK date DateAwarded } %% Relationships
-      INSTRUCTOR --> STUDENT : StudentID CLASS --> INSTRUCTOR : InstructorID
-      CLASS_MEETING --> CLASS : ClassID CLASS_ATTENDANCE --> STUDENT : StudentID
-      CLASS_ATTENDANCE --> CLASS_MEETING : MeetingID INSTRUCTOR_ATTENDANCE -->
-      INSTRUCTOR : StudentID INSTRUCTOR_ATTENDANCE --> CLASS_MEETING : MeetingID
-      RANK_REQUIREMENT --> RANK : RankID STUDENT_RANK --> STUDENT : StudentID
-      STUDENT_RANK --> RANK : RankID
-    </div>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <title>maru-relational</title>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+</head>
+<body>
+  <div class="mermaid">
+classDiagram
+  direction TB
+
+  class STUDENT {
+    int StudentID PK
+    varchar FirstName
+    varchar LastName
+    date DateOfBirth
+    date JoinDate
+  }
+
+  class INSTRUCTOR {
+    int StudentID PK,FK
+    date StartDate
+    string Status
+  }
+
+  class CLASS {
+    int ClassID PK
+    varchar Level
+    varchar DayOfWeek
+    time Time
+    varchar Location
+    int InstructorID FK
+  }
+
+  class CLASS_MEETING {
+    int MeetingID PK
+    date MeetingDate
+    int ClassID FK
+  }
+
+  class CLASS_ATTENDANCE {
+    int StudentID PK,FK
+    int MeetingID PK,FK
+  }
+
+  class INSTRUCTOR_ATTENDANCE {
+    int StudentID PK,FK
+    int MeetingID PK,FK
+    string Role
+  }
+
+  class RANK {
+    int RankID PK
+    varchar RankName
+    varchar BeltColor
+  }
+
+  class RANK_REQUIREMENT {
+    int RequirementID PK
+    int RankID FK
+    text RequirementDescription
+  }
+
+  class STUDENT_RANK {
+    int StudentID PK,FK
+    int RankID PK,FK
+    date DateAwarded
+  }
+
+  %% Relationships
+  INSTRUCTOR --> STUDENT : StudentID
+  CLASS --> INSTRUCTOR : InstructorID
+  CLASS_MEETING --> CLASS : ClassID
+  CLASS_ATTENDANCE --> STUDENT : StudentID
+  CLASS_ATTENDANCE --> CLASS_MEETING : MeetingID
+  INSTRUCTOR_ATTENDANCE --> INSTRUCTOR : StudentID
+  INSTRUCTOR_ATTENDANCE --> CLASS_MEETING : MeetingID
+  RANK_REQUIREMENT --> RANK : RankID
+  STUDENT_RANK --> STUDENT : StudentID
+  STUDENT_RANK --> RANK : RankID
+  </div>
+</body>
 </html>
