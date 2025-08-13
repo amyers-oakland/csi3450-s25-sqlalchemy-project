@@ -86,4 +86,8 @@ function dispatch(): void {
 }
 
 route('GET', '/api/students', [StudentController::class, 'index']);
-route('GET', '/api/students/{name}', [StudentController::class, 'showByName']);
+route('GET', '/api/students/{id:int}', [StudentController::class, 'showById']);
+route('GET', '/api/students/search/{name}', [StudentController::class, 'showByName']);
+route('POST', '/api/students', [StudentController::class, 'store']);
+route('PUT', '/api/students/{id:int}', [StudentController::class, 'update']);
+route('DELETE', '/api/students/{id:int}', [StudentController::class, 'destroy']);
