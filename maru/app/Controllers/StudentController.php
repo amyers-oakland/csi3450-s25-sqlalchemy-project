@@ -102,6 +102,5 @@ class StudentController {
             return;
         }
         http_response_code(204);
-        echo json_encode(['message' => 'Student deleted successfully']);
     }
 }
