@@ -37,7 +37,7 @@ export default function StudentByRank() {
 
       const withRanks = await Promise.all(rankPromises)
 
-      // Filter students where any rank matches query by RankName or BeltColor (case-insensitive)
+      // wanna filter stud. where any rank matches query by rankname or beltbolor
       const filtered = withRanks.filter(item => {
         if (!item.ranks || item.ranks.length === 0) return false
         return item.ranks.some(r => {
