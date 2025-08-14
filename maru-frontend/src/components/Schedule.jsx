@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const API_BASE = 'http://localhost/maru/public/api' // adjust if needed
+const API_BASE = 'http://localhost/maru/public/api' // chang if needed
 
 export default function Schedule() {
   const [items, setItems] = useState([])
@@ -41,3 +41,4 @@ export default function Schedule() {
     </div>
   )
 }
+
