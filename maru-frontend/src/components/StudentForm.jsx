@@ -24,6 +24,7 @@ export default function StudentForm({ initial, onSaved, onCancel }) {
     const payload = { FirstName:first, LastName:last, DateOfBirth:dob, JoinDate:join }
     try {
       if (editing) {
+        // wanna send update to backend
         const res = await fetch(`${API_BASE}/students/${studentID}`, {
           method: 'PUT',
           headers: { 'Content-Type':'application/json' },
@@ -31,6 +32,7 @@ export default function StudentForm({ initial, onSaved, onCancel }) {
         })
         if (!res.ok) throw new Error('Update failed')
       } else {
+        //wanna send student to backen
         const res = await fetch(`${API_BASE}/students`, {
           method: 'POST',
           headers: { 'Content-Type':'application/json' },
@@ -72,4 +74,5 @@ export default function StudentForm({ initial, onSaved, onCancel }) {
     </form>
   )
 }
+
 
