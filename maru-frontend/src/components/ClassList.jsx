@@ -6,8 +6,8 @@ export default function ClassList() {
   const [classes, setClasses] = useState([])
   const [loading, setLoading] = useState(false)
   const [q, setQ] = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [editing, setEditing] = useState(null)
+  const [showForm, setShowForm] = useState(false) //not used yet 
+  const [editing, setEditing] = useState(null) //might delete laterf 
   const [editingMeeting, setEditingMeeting] = useState(null)
   const [newMeetingDate, setNewMeetingDate] = useState('')
 
@@ -193,4 +193,5 @@ export default function ClassList() {
     </div>
   )
 }
+
 
