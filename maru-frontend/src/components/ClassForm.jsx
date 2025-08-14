@@ -11,12 +11,10 @@ export default function ClassForm({ initial, onSaved, onCancel }) {
   const editing = !!initial
 
   useEffect(()=> {
-    // load instructor list (instructors are students in Instructor table)
     async function loadInstructors() {
       try {
         const res = await fetch(`${API_BASE}/students`)
         const data = await res.json()
-        // filter those who are instructors is not directly available; show all students for selection
         setInstructors(data)
       } catch (e) {
         setInstructors([])

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import StudentCard from './StudentCard'
 
-const API_BASE = 'http://localhost/maru/public/api' // adjust if needed
+const API_BASE = 'http://localhost/api'
 
 export default function Schedule() {
   const [items, setItems] = useState([])
@@ -17,26 +18,36 @@ export default function Schedule() {
     load()
   }, [])
 
+  const looksLikeStudents = items.length > 0 && items[0] && items[0].StudentID
+
   return (
     <div>
       <h2>Class Schedule</h2>
       {loading ? <div className="small">Loading schedule...</div> :
         items.length === 0 ? <div className="small">No schedule entries.</div> :
-        <table>
-          <thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Location</th><th>Meeting Date</th><th>Instructor</th></tr></thead>
-          <tbody>
-            {items.map((it, idx) => (
-              <tr key={idx}>
-                <td>{it.Level}</td>
-                <td>{it.DayOfWeek}</td>
-                <td>{it.Time}</td>
-                <td>{it.Location}</td>
-                <td>{it.MeetingDate || '-'}</td>
-                <td>{it.InstructorName || '-'}</td>
-              </tr>
+        looksLikeStudents ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', margin: -8 }}>
+            {items.map((s) => (
+              <StudentCard key={s.StudentID} student={s} />
             ))}
-          </tbody>
-        </table>
+          </div>
+        ) : (
+          <table>
+            <thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Location</th><th>Meeting Date</th><th>Instructor</th></tr></thead>
+            <tbody>
+              {items.map((it, idx) => (
+                <tr key={idx}>
+                  <td>{it.Level}</td>
+                  <td>{it.DayOfWeek}</td>
+                  <td>{it.Time}</td>
+                  <td>{it.Location}</td>
+                  <td>{it.MeetingDate || '-'}</td>
+                  <td>{it.InstructorName || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
       }
     </div>
   )

@@ -16,6 +16,34 @@ Class Student {
         }
     }
 
+    public static function getSchedule(int $id): ?array {
+        try {
+            $pdo = (new Database())->connect();
+            $sql = "
+                SELECT 
+                    c.`ClassID`,
+                    cm.`MeetingID`,
+                    c.`Level`,
+                    c.`DayOfWeek`,
+                    c.`Time`,
+                    c.`Location`,
+                    cm.`MeetingDate`
+                FROM `Class_Attendance` ca
+                JOIN `Class_Meeting` cm ON cm.`MeetingID` = ca.`MeetingID`
+                JOIN `Class` c ON c.`ClassID` = cm.`ClassID`
+                WHERE ca.`StudentID` = :id
+                ORDER BY cm.`MeetingDate`, c.`Time`
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
     public static function findByName(string $name): array {
         try {
             $pdo = (new Database())->connect();
@@ -43,7 +71,7 @@ Class Student {
         }
     }
 
-    public static function create(string $firstName, string $lastName, string $dateOfBirth, string $joinDate): ?array {
+    public static function create(string $firstName, string $lastName, string $dateOfBirth, string $joinDate, int $rankId, bool $isInstructor = false, ?string $instructorStatus = null): ?array {
         try {
             $pdo = (new Database())->connect();
             $pdo->beginTransaction();
@@ -58,6 +86,34 @@ Class Student {
                 ':joinDate' => $joinDate,
             ]);
             $id = (int)$pdo->lastInsertId();
+            $currentDate = (new \DateTime('now', new \DateTimeZone(date_default_timezone_get())))->format('Y-m-d');
+            $stmtRank = $pdo->prepare("INSERT INTO Student_Rank (StudentID, RankID, DateAwarded) VALUES (:sid, :rid, :awarded)");
+            $stmtRank->bindValue(':sid', $id, PDO::PARAM_INT);
+            $stmtRank->bindValue(':rid', (int)$rankId, PDO::PARAM_INT);
+            $stmtRank->bindValue(':awarded', $currentDate, PDO::PARAM_STR);
+            $stmtRank->execute();
+            if ($isInstructor) {
+                $status = $instructorStatus === null ? null : trim((string)$instructorStatus);
+                if ($status === null || $status === '') {
+                    throw new PDOException('Instructor status is required when instructor=true');
+                }
+                $statusLower = strtolower($status);
+                $normalized = match ($statusLower) {
+                    'compensated' => 'Compensated',
+                    'volunteer' => 'Volunteer',
+                    default => null,
+                };
+                if ($normalized === null) {
+                    throw new PDOException('Invalid instructor status');
+                }
+
+                $currentDate = (new \DateTime('now', new \DateTimeZone(date_default_timezone_get())))->format('Y-m-d');
+                $ins = $pdo->prepare("INSERT INTO Instructor (StudentID, StartDate, Status) VALUES (:sid, :startDate, :status)");
+                $ins->bindValue(':sid', $id, PDO::PARAM_INT);
+                $ins->bindValue(':startDate', $currentDate, PDO::PARAM_STR);
+                $ins->bindValue(':status', $normalized, PDO::PARAM_STR);
+                $ins->execute();
+            }
             $pdo->commit();
             return self::findById($id);
         } catch (PDOException $e) {
@@ -172,6 +228,61 @@ Class Student {
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return null;
+        }
+    }
+
+    public static function getRanks(): array {
+        try {
+            $pdo = (new Database())->connect();
+
+            $sql = "
+                SELECT 
+                    s.`StudentID`,
+                    s.`FirstName`,
+                    s.`LastName`,
+                    s.`DateOfBirth`,
+                    s.`JoinDate`,
+                    r.`RankID`,
+                    r.`RankName`,
+                    r.`BeltColor`,
+                    sr.`DateAwarded`
+                FROM `Student` s
+                LEFT JOIN `Student_Rank` sr ON sr.`StudentID` = s.`StudentID`
+                LEFT JOIN `Rank` r ON r.`RankID` = sr.`RankID`
+                ORDER BY s.`StudentID`, sr.`DateAwarded` DESC
+            ";
+
+            $stmt = $pdo->query($sql);
+            $rows = $stmt->fetchAll();
+
+            $byStudent = [];
+            foreach ($rows as $row) {
+                $sid = (int)$row['StudentID'];
+                if (!isset($byStudent[$sid])) {
+                    $byStudent[$sid] = [
+                        'StudentID' => $sid,
+                        'FirstName' => $row['FirstName'],
+                        'LastName' => $row['LastName'],
+                        'DateOfBirth' => $row['DateOfBirth'],
+                        'JoinDate' => $row['JoinDate'],
+                        'ranks' => [],
+                    ];
+                }
+
+                if ($row['RankID'] !== null) {
+                    $byStudent[$sid]['ranks'][] = [
+                        'RankID' => (int)$row['RankID'],
+                        'RankName' => $row['RankName'],
+                        'BeltColor' => $row['BeltColor'],
+                        'DateAwarded' => $row['DateAwarded'],
+                    ];
+                }
+            }
+
+            return array_values($byStudent);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
         }
     }
 }

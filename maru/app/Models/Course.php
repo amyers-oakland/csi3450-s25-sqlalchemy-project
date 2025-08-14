@@ -67,8 +67,22 @@ class Course {
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             $updatedRows = $stmt->rowCount();
+
+            $getClassStmt = $pdo->prepare("SELECT ClassID FROM Class_Meeting WHERE MeetingID = :id");
+            $getClassStmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $getClassStmt->execute();
+            $classId = $getClassStmt->fetchColumn();
+
+            if ($classId) {
+                $newDow = (new \DateTime($date))->format('l');
+                $upd = $pdo->prepare("UPDATE Class SET DayOfWeek = :dow WHERE ClassID = :cid");
+                $upd->bindValue(':dow', $newDow, PDO::PARAM_STR);
+                $upd->bindValue(':cid', $classId, PDO::PARAM_INT);
+                $upd->execute();
+            }
+
             $pdo->commit();
-            return ['success' => true, 'updatedRows' => $updatedRows];
+            return ['success' => true, 'updatedRows' => $updatedRows, 'ClassID' => $classId ?: null];
         } catch (PDOException $e) {
             error_log($e->getMessage());
             if (isset($pdo) && $pdo->inTransaction()) {
