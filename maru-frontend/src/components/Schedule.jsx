@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import StudentCard from './StudentCard'
-
 const API_BASE = 'http://localhost/api'
 
 export default function Schedule() {
@@ -52,3 +51,4 @@ export default function Schedule() {
     </div>
   )
 }
+

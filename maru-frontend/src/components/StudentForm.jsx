@@ -72,3 +72,4 @@ export default function StudentForm({ initial, onSaved, onCancel }) {
     </form>
   )
 }
+
