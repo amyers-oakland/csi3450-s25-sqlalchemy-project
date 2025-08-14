@@ -12,6 +12,7 @@ class Course {
         $sql = "
             SELECT 
                 c.`ClassID`, 
+                cm.`MeetingID`,
                 c.`Level`, 
                 c.`DayOfWeek`,
                 c.`Time`, 
@@ -51,4 +52,29 @@ class Course {
             return null;
         }
     }
+
+    public static function update(int $id, array $data): ?array {
+        try {
+            $date = trim((string)$data['MeetingDate']);
+            if (!Validation::isValidDate($date)) {
+                return ['MeetingDate' => 'Invalid date'];
+            }
+            $pdo = (new Database())->connect();
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("UPDATE Class_Meeting SET MeetingDate = :date WHERE MeetingID = :id");
+            $stmt->bindValue(':date', $data['MeetingDate'], PDO::PARAM_STR);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $updatedRows = $stmt->rowCount();
+            $pdo->commit();
+            return ['success' => true, 'updatedRows' => $updatedRows];
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            if (isset($pdo) && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            return ['success' => false, 'error' => 'Failed to update meeting time'];
+        }
+    }
+
 }
