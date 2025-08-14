@@ -22,4 +22,23 @@ class Course {
             return null;
         }
     }
+
+    public static function delete(int $id): ?bool {
+        try {
+            $pdo = (new Database())->connect();
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("DELETE FROM Class_Meeting WHERE MeetingID = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $deletedRows = $stmt->rowCount();
+            $pdo->commit();
+            return $deletedRows > 0;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            if (isset($pdo) && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            return null;
+        }
+    }
 }
