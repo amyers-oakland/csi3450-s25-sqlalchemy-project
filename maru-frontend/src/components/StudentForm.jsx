@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-const API_BASE = 'http://localhost/maru/api' // need to change
+const API_BASE = 'http://localhost/maru/api'
 
 export default function StudentForm({ initial, onSaved, onCancel }) {
   const [studentID, setStudentID] = useState(initial?.StudentID || '')

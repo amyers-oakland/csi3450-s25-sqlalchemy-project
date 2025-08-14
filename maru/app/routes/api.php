@@ -4,8 +4,15 @@ use App\Controllers\CourseController;
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 header("Access-Control-Allow-Origin: $origin");
-header("Access-Control-Allow-Methods: *");
-header("Access-Control-Allow-Headers: *");
+header('Vary: Origin');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Max-Age: 86400');
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 function dump_json($data, int $status = 200): void {
     http_response_code($status);
@@ -86,12 +93,15 @@ function dispatch(): void {
 }
 
 route('GET', '/api/students', [StudentController::class, 'index']);
+route('GET', '/api/students/{id:int}/schedule', [StudentController::class, 'showSchedule']);
 route('GET', '/api/students/{id:int}', [StudentController::class, 'showById']);
 route('GET', '/api/students/search/{name}', [StudentController::class, 'showByName']);
 route('POST', '/api/students', [StudentController::class, 'store']);
 route('PUT', '/api/students/{id:int}', [StudentController::class, 'update']);
 route('DELETE', '/api/students/{id:int}', [StudentController::class, 'destroy']);
 route('GET', '/api/students/{id:int}/rank', [StudentController::class, 'showRank']);
+route('GET', '/api/students/ranks', [StudentController::class, 'showRanks']);
 route('GET', '/api/meetings', [CourseController::class, 'index']);
 route('DELETE', '/api/meetings/{id:int}', [CourseController::class, 'destroy']);
 route('PUT', '/api/meetings/{id:int}', [CourseController::class, 'update']);
+route('GET', '/api/schedule', [StudentController::class, 'index']);

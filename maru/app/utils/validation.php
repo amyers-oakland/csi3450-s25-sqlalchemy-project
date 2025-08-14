@@ -38,7 +38,6 @@ class Validation {
         return $errors;
     }
 
-    // Partial validator: only validate provided fields
     public static function validateStudentPartial(array $data) : array {
         $errors = [];
         if (array_key_exists('FirstName', $data)) {
