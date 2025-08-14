@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ClassForm from './ClassForm'
-const API_BASE = 'http://localhost/maru/public/api' // change if needed
+const API_BASE = 'http://localhost/api' // change if needed
 
 export default function ClassList() {
   const [classes, setClasses] = useState([])
@@ -11,7 +11,7 @@ export default function ClassList() {
 
   async function loadAll() {
     setLoading(true)
-    const res = await fetch(`${API_BASE}/classes`)
+    const res = await fetch(`${API_BASE}/meetings`)
     const data = await res.json()
     setClasses(data)
     setLoading(false)
