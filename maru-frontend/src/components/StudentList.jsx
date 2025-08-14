@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import StudentForm from './StudentForm'
 import StudentCreateModal from './StudentCreateModal'
-const API_BASE = 'http://localhost/api';
+const API_BASE = 'http://localhost/api'; //can change
 
 
 export default function StudentList() {
@@ -12,6 +12,8 @@ export default function StudentList() {
   const [editing, setEditing] = useState(null)
   const [showCreate, setShowCreate] = useState(false)
 
+  
+// wanna grab all students from API
   async function loadAll() {
     setLoading(true)
     const res = await fetch(`${API_BASE}/students`)
@@ -31,7 +33,7 @@ export default function StudentList() {
     setStudents(data)
     setLoading(false)
   }
-
+//to delete stud.
   async function doDelete(id) {
     if (!confirm('Delete this student?')) return
     const res = await fetch(`${API_BASE}/students/${id}`, { method: 'DELETE' })
@@ -85,4 +87,5 @@ export default function StudentList() {
     </div>
   )
 }
+
 
