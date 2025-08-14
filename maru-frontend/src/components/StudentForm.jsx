@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-const API_BASE = 'http://localhost/maru/api' // <--- adjust to your backend URL (no /public if you copied public into /var/www/html/maru)
+const API_BASE = 'http://localhost/maru/api' // need to change
 
 export default function StudentForm({ initial, onSaved, onCancel }) {
   const [studentID, setStudentID] = useState(initial?.StudentID || '')
@@ -72,3 +72,4 @@ export default function StudentForm({ initial, onSaved, onCancel }) {
     </form>
   )
 }
+
