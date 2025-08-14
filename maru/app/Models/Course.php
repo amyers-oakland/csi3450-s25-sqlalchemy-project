@@ -57,7 +57,6 @@ class Course {
     public static function update(int $id, array $data): ?array {
         try {
             $date = trim((string)$data['MeetingDate']);
-            echo $date;
             if (!Validation::isValidDate($date)) {
                 return ['MeetingDate' => 'Invalid date'];
             }
