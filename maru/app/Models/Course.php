@@ -4,6 +4,7 @@ namespace App\Models;
 use PDO;
 use PDOException;
 use App\Config\Database;
+use App\Utils\Validation;
 
 class Course {
     public static function all(): ?array {
@@ -56,6 +57,7 @@ class Course {
     public static function update(int $id, array $data): ?array {
         try {
             $date = trim((string)$data['MeetingDate']);
+            echo $date;
             if (!Validation::isValidDate($date)) {
                 return ['MeetingDate' => 'Invalid date'];
             }

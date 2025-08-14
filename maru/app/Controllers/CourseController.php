@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 use App\Models\Course;
+use App\Utils\Validation;
 
 class CourseController {
     public function index() {
@@ -50,5 +51,6 @@ class CourseController {
             return;
         }
         http_response_code(200);
+        echo json_encode($updated);
     }
 }
