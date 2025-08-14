@@ -18,12 +18,12 @@ export default function StudentByRank() {
     setLoading(true)
     setError(null)
     try {
-      // Fetch all students
+      // wanna fetch all students
       const res = await fetch(`${API_BASE}/students`)
       if (!res.ok) throw new Error('Failed to load students')
       const students = await res.json()
 
-      // For each student fetch ranks
+      // so for each student fetch ranks
       const rankPromises = students.map(async (s) => {
         try {
           const rr = await fetch(`${API_BASE}/students/${s.StudentID}/rank`)
