@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ClassForm from './ClassForm'
-const API_BASE = 'http://localhost/api' // change if needed
+const API_BASE = 'http://localhost/api' // we can change if need
 
 export default function ClassList() {
   const [classes, setClasses] = useState([])
@@ -193,3 +193,4 @@ export default function ClassList() {
     </div>
   )
 }
+
