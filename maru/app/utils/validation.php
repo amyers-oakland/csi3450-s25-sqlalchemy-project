@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 namespace App\Utils;
+use App\Config\Database;
+use PDO;
+use PDOException;
 
 class Validation {
     
@@ -62,6 +65,39 @@ class Validation {
                 $errors['JoinDate'] = 'Join date must be YYYY-MM-DD';
             }
         }
+        return $errors;
+    }
+
+    public static function validateCoursePartial(array $data): array {
+        $errors = [];
+        if (array_key_exists('ClassID', $data)) {
+            $classId = (int)($data['ClassID'] ?? 0);
+            if ($classId <= 0) {
+                $errors['ClassID'] = 'Course does not exist';
+            } else {
+                try {
+                    $pdo = (new Database())->connect();
+                    $stmt = $pdo->prepare('SELECT 1 FROM `Class` WHERE `ClassID` = :id');
+                    $stmt->bindValue(':id', $classId, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $exists = $stmt->fetchColumn() !== false;
+                    if (!$exists) {
+                        $errors['ClassID'] = 'Course does not exist';
+                    }
+                } catch (PDOException $e) {
+                    error_log($e->getMessage());
+                    $errors['ClassID'] = 'Unable to verify ClassID';
+                }
+            }
+        }
+
+        if (array_key_exists('MeetingDate', $data)) {
+            $meetingDate = trim((string)$data['MeetingDate']);
+            if (!self::isValidDate($meetingDate)) {
+                $errors['MeetingDate'] = 'Meeting date must be YYYY-MM-DD';
+            }
+        }
+
         return $errors;
     }
 }

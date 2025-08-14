@@ -28,4 +28,27 @@ class CourseController {
         }
         http_response_code(204);
     }
+
+    public function update(int $id) {
+        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+        $errors = Validation::validateCoursePartial($data);
+        if ($errors) {
+            http_response_code(400);
+            echo json_encode(['errors' => $errors]);
+            return;
+        }
+
+        $updated = Course::update($id, $data);
+        if ($updated === null) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to update meeting time']);
+            return;
+        }
+        if ($updated['success'] === false) {
+            http_response_code(400);
+            echo json_encode(['error' => $updated['error']]);
+            return;
+        }
+        http_response_code(200);
+    }
 }
