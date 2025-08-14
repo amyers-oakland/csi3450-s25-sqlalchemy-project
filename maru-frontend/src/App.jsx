@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import StudentList from './components/StudentList'
 import ClassList from './components/ClassList'
 import Schedule from './components/Schedule'
+import StudentByRank from './components/StudentByRank'
 
 export default function App() {
   const [view, setView] = useState('students')
@@ -12,11 +13,13 @@ export default function App() {
         <button onClick={() => setView('students')}>Students</button>
         <button onClick={() => setView('classes')}>Classes</button>
         <button onClick={() => setView('schedule')}>Schedule</button>
+        <button onClick={() => setView('by-rank')}>Search by Rank</button>
       </nav>
       <hr />
       {view === 'students' && <StudentList />}
       {view === 'classes' && <ClassList />}
       {view === 'schedule' && <Schedule />}
+      {view === 'by-rank' && <StudentByRank />}
     </div>
   )
 }
