@@ -74,7 +74,7 @@ Class Student {
             $pdo = (new Database())->connect();
             $pdo->beginTransaction();
 
-            // Allow only known, updatable columns
+            // don't change DB structure
             $allowedColumns = ['FirstName', 'LastName', 'DateOfBirth', 'JoinDate'];
             $fieldsToUpdate = array_intersect_key($data, array_flip($allowedColumns));
 
@@ -121,6 +121,56 @@ Class Student {
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+            return null;
+        }
+    }
+
+    public static function getRank(int $id): ?array {
+        try {
+            $pdo = (new Database())->connect();
+
+            // get the student row
+            $studentStmt = $pdo->prepare("SELECT * FROM Student WHERE StudentID = :id");
+            $studentStmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $studentStmt->execute();
+            $student = $studentStmt->fetch();
+            if (!$student) {
+                return null;
+            }
+
+            // get all awarded ranks for StudentID
+            $rankStmt = $pdo->prepare(
+                "SELECT r.RankID, r.RankName, r.BeltColor, sr.DateAwarded
+                 FROM Student_Rank sr
+                 JOIN Rank r ON r.RankID = sr.RankID
+                 WHERE sr.StudentID = :id
+                 ORDER BY sr.DateAwarded DESC"
+            );
+            $rankStmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $rankStmt->execute();
+            $ranks = $rankStmt->fetchAll();
+
+
+            // combine data
+            // array_map uses anon function to cast RankID as an int
+            // also not mutating the original object
+            return [
+                'StudentID' => (int)$student['StudentID'],
+                'FirstName' => $student['FirstName'],
+                'LastName' => $student['LastName'],
+                'DateOfBirth' => $student['DateOfBirth'],
+                'JoinDate' => $student['JoinDate'],
+                'ranks' => array_map(function($r) {
+                    return [
+                        'RankID' => (int)$r['RankID'],
+                        'RankName' => $r['RankName'],
+                        'BeltColor' => $r['BeltColor'],
+                        'DateAwarded' => $r['DateAwarded'],
+                    ];
+                }, $ranks),
+            ];
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
             return null;
         }
     }

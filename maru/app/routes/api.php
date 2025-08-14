@@ -47,7 +47,7 @@ function route(string $method, string $pattern, array $handler): void {
         };
     }, $pattern);
 
-    // Allow optional trailing slash for all routes
+    // allow trailing slash for path
     $regex = '#^' . rtrim($regex, '/') . '/?$#';
     $routes[$method][] = ['regex' => $regex, 'vars' => $varNames, 'handler' => $handler];
 }
@@ -70,7 +70,6 @@ function dispatch(): void {
       }
     }
   
-    // Method exists for another verb?
     foreach ($routes as $verb => $list) {
       if ($verb === $method) continue;
       foreach ($list as $r) {
@@ -91,3 +90,4 @@ route('GET', '/api/students/search/{name}', [StudentController::class, 'showByNa
 route('POST', '/api/students', [StudentController::class, 'store']);
 route('PUT', '/api/students/{id:int}', [StudentController::class, 'update']);
 route('DELETE', '/api/students/{id:int}', [StudentController::class, 'destroy']);
+route('GET', '/api/students/{id:int}/rank', [StudentController::class, 'showRank']);

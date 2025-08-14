@@ -26,6 +26,17 @@ class StudentController {
         echo json_encode($row);
     }
 
+    public function showRank(string $id) {
+        $numericId = (int)$id;
+        $result = Student::getRank($numericId);
+        if ($result === null) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Student not found']);
+            return;
+        }
+        echo json_encode($result);
+    }
+
     public function store() {
         // read the JSON data from the request body (php://input)
         // file_get_contents() reads the file stream
@@ -59,7 +70,7 @@ class StudentController {
     public function update(string $id) {
         $data = json_decode(file_get_contents('php://input'), true) ?? [];
 
-        // Only validate fields that are present (partial update)
+        // validating only the fields that user is trying to update
         $errors = Validation::validateStudentPartial($data);
         if ($errors) {
             http_response_code(400);
@@ -67,7 +78,7 @@ class StudentController {
             return;
         }
 
-        // Sanitize and pass only allowed fields
+        // get clean strings for the fields that user is trying to update
         $allowed = ['FirstName', 'LastName', 'DateOfBirth', 'JoinDate'];
         $clean = [];
         foreach ($allowed as $field) {
