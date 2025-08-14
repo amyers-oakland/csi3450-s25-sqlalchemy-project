@@ -1,5 +1,6 @@
 <?php
 use App\Controllers\StudentController;
+use App\Controllers\CourseController;
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 header("Access-Control-Allow-Origin: $origin");
@@ -91,3 +92,4 @@ route('POST', '/api/students', [StudentController::class, 'store']);
 route('PUT', '/api/students/{id:int}', [StudentController::class, 'update']);
 route('DELETE', '/api/students/{id:int}', [StudentController::class, 'destroy']);
 route('GET', '/api/students/{id:int}/rank', [StudentController::class, 'showRank']);
+route('GET', '/api/meetings', [CourseController::class, 'index']);
