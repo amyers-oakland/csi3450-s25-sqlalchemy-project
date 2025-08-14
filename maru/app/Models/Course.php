@@ -10,9 +10,19 @@ class Course {
         try {
         $db = (new Database())->connect();
         $sql = "
-            SELECT c.`ClassID`, c.`Level`, c.`Time`, c.`Location`, cm.`MeetingDate`
+            SELECT 
+                c.`ClassID`, 
+                c.`Level`, 
+                c.`DayOfWeek`,
+                c.`Time`, 
+                c.`Location`, 
+                cm.`MeetingDate`,
+                CONCAT(s.`FirstName`, ' ', s.`LastName`) AS `InstructorName`
             FROM `Class` c
             JOIN `Class_Meeting` cm ON c.`ClassID` = cm.`ClassID`
+            LEFT JOIN `Instructor_Attendance` ia 
+                ON ia.`MeetingID` = cm.`MeetingID` AND ia.`Role` = 'Head'
+            LEFT JOIN `Student` s ON s.`StudentID` = ia.`StudentID`
             ORDER BY cm.`MeetingDate`, c.`Time`
         ";
         $stmt = $db->query($sql);
